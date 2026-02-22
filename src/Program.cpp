@@ -17,8 +17,8 @@ Program::Program() {
         });
 
     for (int i = 0; i < 30; i++) {
-        float x = 250 + 50 * i;
-        float y = 200 + 50 * i;
+        float x = 250 + 50 * (i % 10);  //  resets horizontal position every 10 enemies
+        float y = 200 + 50 * (i / 10);  // increases vertical position every 10 enemies
 
         Enemy::enemies.push_back(std::pair<std::pair<float, float>, Enemy*> {
             std::pair<float, float>{x, y}, 
@@ -57,8 +57,12 @@ void Program::Update() {
 
         for (Projectile& p : Projectile::projectiles) { 
             p.update(); 
-
-        }
+    if (p.ID == 0) { // Ignore player projectiles, so the player cannot damage itself.
+     continue; 
+     }
+    if (HitBox::Collision(player->hitBox, p.getHitBox())) {  // If an enemy projectile collides with the player's hitbox, reset the player and reduce a life.
+    }
+}
 
         if (lives <= 0 && pauseFrames <= 0) gameOver = true;
         Projectile::CleanProjectiles();
@@ -180,6 +184,26 @@ void Program::PlayerReset() {
 
 void Program::Reset() {
     Enemy::enemies.clear();
+
+//I added what was in the update program so that when you restart the game, the enemies appear as if you had started the game for the first time.
+     Enemy::enemies.push_back(std::pair<std::pair<float, float>, Enemy*> {
+            std::pair<float, float>{350, 150}, 
+            new SpEnemy(350, 150)
+        });
+
+    Enemy::enemies.push_back(std::pair<std::pair<float, float>, Enemy*> {
+            std::pair<float, float>{600, 150}, 
+            new SpEnemy(600, 150)
+        });
+
+    for (int i = 0; i < 30; i++) {
+        float x = 250 + 50 * (i % 10);  
+        float y = 200 + 50 * (i / 10);  
+
+        Enemy::enemies.push_back(std::pair<std::pair<float, float>, Enemy*> {
+            std::pair<float, float>{x, y}, 
+            new StdEnemy(x, y)
+        });
     StdEnemy::attackInProgress = false;
     player = new Player((GetScreenWidth() / 2) - 15, GetScreenHeight() * 0.75f);
     respawnCooldown = 1080;
@@ -187,4 +211,5 @@ void Program::Reset() {
     count = 0;
     delay = 0;
     lives = 3;
+}
 }
