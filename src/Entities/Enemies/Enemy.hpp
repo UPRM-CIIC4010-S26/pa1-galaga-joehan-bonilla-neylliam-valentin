@@ -3,6 +3,7 @@
 #include "Math.hpp"
 #include "ImageManager.hpp"
 #include "Animation.hpp"
+#include "SoundManager.hpp" // It includes the Sound Manager to access the game's sound effects
 #include <iostream>
 
 class Enemy {
@@ -53,6 +54,13 @@ class Enemy {
                     for (Projectile& p2 : Projectile::projectiles) {
                         if (p2.ID != 1 && HitBox::Collision(p.second->hitBox, p2.getHitBox())) {
                             p.second->health--;
+
+                            if(p.second->health > 0){  // Plays the sound of the hit if the enemy was damaged
+                                PlaySound(SoundManager::hit);
+                            }
+                            else{
+                                PlaySound(SoundManager::dead); // Play death sound if enemy health reaches zero
+                            }
                             p2.del = true;
                         }
                     }
