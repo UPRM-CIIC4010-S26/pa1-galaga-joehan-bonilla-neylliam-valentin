@@ -93,9 +93,18 @@ void Program::Draw() {
 void Program::ManageEnemyRespawns() {
     delay = std::max(delay - 1, 0);
 
+    int baseCooldown = 1080;
+    int cooldownReduction = (score / 500) * 60;
+    int adjustedCooldown = baseCooldown - cooldownReduction;
+    
+    if (adjustedCooldown < 300) {
+    adjustedCooldown = 300;
+}
+
+
     respawnCooldown -= 1;
     if (respawnCooldown <= 0) {
-        respawnCooldown = 1080;
+        respawnCooldown = adjustedCooldown;
         for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
             if (!p.second && p.first.second != 150) {
                 int eType = GetRandomValue(1, 3);
@@ -156,7 +165,19 @@ void Program::KeyInputs() {
     if (!paused && !startup && IsKeyPressed('O')) gameOver = !gameOver;
     if (!gameOver && !paused && IsKeyPressed('I')) startup = !startup;
     if (IsKeyPressed('H')) HitBox::drawHitbox = !HitBox::drawHitbox;
-    
+    if (IsKeyPressed('K')) {
+        score += 500; 
+    }
+    int milestones = score / 1000;
+
+    if (milestones > scoreMilestonesReached) {
+        scoreMilestonesReached = milestones;
+        if (lives > 5) {
+            lives++; 
+        }
+    }
+
+
     if (gameOver && IsKeyPressed(KEY_ENTER)) {
         gameOver = false;
         Reset();
