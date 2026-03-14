@@ -92,8 +92,9 @@ void Program::Draw() {
 
 void Program::ManageEnemyRespawns() {
     delay = std::max(delay - 1, 0);
-
+// Adjust the respawn cooldown based on the player's score, with a minimum cooldown of 300 frames to prevent it from becoming too fast.
     int baseCooldown = 1080;
+    // For every 500 points, reduce the cooldown by 60 frames.
     int cooldownReduction = (score / 500) * 60;
     int adjustedCooldown = baseCooldown - cooldownReduction;
     
@@ -104,6 +105,7 @@ void Program::ManageEnemyRespawns() {
 
     respawnCooldown -= 1;
     if (respawnCooldown <= 0) {
+        // Reset the respawn cooldown to the adjusted value based on the player's score.
         respawnCooldown = adjustedCooldown;
         for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
             if (!p.second && p.first.second != 150) {
@@ -165,9 +167,11 @@ void Program::KeyInputs() {
     if (!paused && !startup && IsKeyPressed('O')) gameOver = !gameOver;
     if (!gameOver && !paused && IsKeyPressed('I')) startup = !startup;
     if (IsKeyPressed('H')) HitBox::drawHitbox = !HitBox::drawHitbox;
+    // Cheat code to increase score by 500 points
     if (IsKeyPressed('K')) {
         score += 500; 
     }
+    // Count milestones of every 1000 points scored, for each milesstone reached, increase the player's lives by 1, with  a maximum of 5 lives. 
     int milestones = score / 1000;
 
     if (milestones > scoreMilestonesReached) {
