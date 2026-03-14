@@ -35,7 +35,9 @@ void Program::Update() {
     pauseFrames = std::max(pauseFrames - 1, 0);
 
     if (!startup && !paused && !gameOver && pauseFrames <= 0) {
-        Enemy::ManageEnemies(player->hitBox);
+       Enemy::ManageEnemies(player->hitBox);
+       score += Enemy::pointsEarned;   
+       Enemy::pointsEarned = 0; 
         StdEnemy::attackReset();
         ManageEnemyRespawns();
         player->update();
@@ -83,6 +85,7 @@ void Program::Draw() {
                    Vector2{0, 0}, 0, WHITE);
     }
 
+    DrawText(TextFormat("Score: %i", score), 10, 10, 30, WHITE);
 
     for (Projectile p : Projectile::projectiles) p.draw();
     for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) if (p.second) p.second->draw();
@@ -178,7 +181,7 @@ void Program::KeyInputs() {
 
     if (milestones > scoreMilestonesReached) {
         scoreMilestonesReached = milestones;
-        if (lives > 5) {
+        if (lives < 5) {
             lives++; 
         }
     }
@@ -238,5 +241,7 @@ void Program::Reset() {
     count = 0;
     delay = 0;
     lives = 3;
+    score = 0;
+    scoreMilestonesReached = 0;
 }
 }
