@@ -61,6 +61,8 @@ void Program::Update() {
      continue; 
      }
     if (HitBox::Collision(player->hitBox, p.getHitBox())) {  // If an enemy projectile collides with the player's hitbox, reset the player and reduce a life.
+         p.del = true;
+        PlayerReset();
     }
 }
 
